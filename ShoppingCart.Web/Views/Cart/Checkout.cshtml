@@ -1,0 +1,94 @@
+﻿@model CartDto;
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<form method="post">
+    <input type="hidden" asp-for="CartHeader.Id" />
+    <input type="hidden" asp-for="CartHeader.UserId" />
+    <input type="hidden" asp-for="CartHeader.CouponCode" />
+    <input type="hidden" asp-for="CartHeader.Discount" />
+    <input type="hidden" asp-for="CartHeader.CartTotal" />
+    <div class="card border mt-4 container">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-6">Order Summary</div>
+                <div class="col-6 text-end">
+                    <p class="card-text"><a asp-controller="Cart" asp-action="Index">Back to cart</a></p>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row col-12">
+                <div class="col-6">
+                    <div class="col-12 py-2">
+                        <input asp-for="CartHeader.Name" class="form-control" placeholder="First Name" />
+                        <span asp-validation-for="CartHeader.Name" class="text-danger"></span>
+                    </div>
+                    <div class="col-12 py-2">
+                        <input asp-for="CartHeader.Email" class="form-control" placeholder="Email" />
+                        <span asp-validation-for="CartHeader.Email" class="text-danger"></span>
+                    </div>
+                    <div class="col-12 py-2">
+                        <input asp-for="CartHeader.Phone" class="form-control" placeholder="Phone" />
+                        <span asp-validation-for="CartHeader.Phone" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row text-info">
+                        <div class="col-lg-2"></div>
+                        <div class="col-lg-5">Product Details</div>
+                        <div class="col-lg-2">Price</div>
+                        <div class="col-lg-2">Count</div>
+                        <div class="col-lg-1"></div>
+
+                    </div>
+                    <hr />
+                    @foreach (var item in Model.CartDetails)
+                    {
+                        <div class="row">
+                            <div class="col-lg-2">
+                                @* <img src="@item.Product.ImageUrl" alt="@item.Product.Name" class="img-fluid" /> *@
+                            </div>
+                            <div class="col-lg-5">
+                                <h5>@item.Product.Name</h5>
+                                <p> @item.Product.Description</p>
+                            </div>
+                            <div class="col-lg-2">
+                                <h5>@item.Product.Price.ToString("C")</h5>
+                            </div>
+                            <div class="col-lg-2">
+                                <h5>@item.Count</h5>
+                            </div>
+                            <div class="col-lg-1 text-end">
+                                @* <a asp-action="RemoveFromCart" class="btn btn-danger btn-sm remove-item" asp-route-cartDetailsId="@item.Id">Remove</a> *@
+                            </div>
+                        </div>
+                    }
+                    <hr />
+                    <div class="row">
+                        <div class="col-6">
+                        </div>
+                        <div class="col-6 text-end">
+                            <span class="text-danger" style="font-size:21px;">Order Total : @string.Format("{0:c}", Model.CartHeader.CartTotal) <br /></span>
+                            @if (Model.CartHeader.Discount > 0)
+                            {
+                                <span class="text-success" style="font-size:21px;">Order Discount : @string.Format("{0:c}", Model.CartHeader.Discount) <br /></span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer row">
+            <div class="col-6 col-md-3">
+                <input type="submit" asp-action="Checkout" class="btn btn-primary" value="Place Order" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/cart.js"></script>
+}

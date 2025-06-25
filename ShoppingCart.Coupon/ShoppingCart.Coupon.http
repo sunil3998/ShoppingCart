@@ -1,0 +1,6 @@
+@ShoppingCart.Coupon_HostAddress = http://localhost:5174
+
+GET {{ShoppingCart.Coupon_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

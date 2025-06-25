@@ -1,0 +1,105 @@
+﻿@using ShoppingCart.Web.Utility
+@model OrderHeaderDto
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+}
+<form method="post">
+    <div class="container">
+        <div class="card">
+            <div class="card border mt-4 container">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-6">Order Summary</div>
+                        <div class="col-6 text-end">
+                            <p class="card-text"><a asp-controller="Order" asp-action="Index">Back to Orders</a></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row col-12">
+                        <div class="col-6 pb-6">
+                            <div class="col-12 py-2">
+                                <input asp-for="Name" readonly class="form-control" placeholder="First Name" />
+                            </div>
+                            <div class="col-12 py-2">
+                                <input asp-for="Email" readonly class="form-control" placeholder="Email" />
+                            </div>
+                            <div class="col-12 py-2">
+                                <input asp-for="Phone" readonly class="form-control" placeholder="Phone" />
+                            </div>
+                            <div class="col-12 py-2">
+                                <input value="@Model.OrderTime.ToShortDateString()" readonly class="form-control" placeholder="Phone" />
+                            </div>
+                            <div class="col-12 py-2">
+                                <input asp-for="OrderStatus" readonly class="form-control" placeholder="Phone" />
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="row text-info">
+                                <h4 class="d-flex justify-content-between align-items-center mb-3 btn-warning">
+                                    @Model.OrderStatus
+                                </h4>
+                            </div>
+                            <hr />
+                            <ul class="list-group mb-3">
+                                @foreach (var detail in Model.OrderDetails)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between p-2">
+                                        <div class="row container">
+                                            <div class="col-8">
+                                                <h6 class="my-0 text-white-50 text-primary"> @detail.ProductName </h6>
+                                                <small class="text-mute">Price :  @detail.Price.ToString("c")</small><br />
+                                                <small class="text-mute">Quantity :  @detail.Count</small>
+                                            </div>
+                                            <div class="col-4 text-end">
+                                                <p class="text-success">@((detail.Count*detail.Price).ToString("c"))</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                                <li class="list-group-item d-flex justify-content-between p-2bg-primary">
+                                    <div class="row container">
+                                        <div class="col-6">
+                                            <h5>Total</h5>
+                                        </div>
+                                        <div class="col-6">
+                                            <h5>Order Total</h5>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                            @if (User.IsInRole(StaticData.RoleAdmin))
+                            {
+                                @if (Model.OrderStatus == StaticData.Status_Pending)
+                                {
+                                    <button asp-action="ApproveOrder" asp-route-orderId="@Model.OrderHeaderId" type="submit" class="btn btn-success from-control my-1">Approved Order</button>
+                                }
+                                @if (Model.OrderStatus == StaticData.Status_Approved)
+                                {
+                                    <button asp-action="ReadyForPickup" asp-route-orderId="@Model.OrderHeaderId" type="submit" class="btn btn-success from-control my-1">Ready for pickup</button>
+                                }
+                                @if (Model.OrderStatus == StaticData.Status_ReadyForPickup)
+                                {
+                                    <button asp-action="CompleteOrder" asp-route-orderId="@Model.OrderHeaderId" type="submit" class="btn btn-success from-control my-1">Completed Order</button>
+                                }
+                                @if (Model.OrderStatus == StaticData.Status_Approved && Model.OrderStatus == StaticData.Status_ReadyForPickup)
+                                {
+                                    <button asp-action="CancelOrder" asp-route-orderId="@Model.OrderHeaderId" type="submit" class="btn btn-danger from-control my-1">Cancelled Order</button>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/cart.js"></script>
+}
+

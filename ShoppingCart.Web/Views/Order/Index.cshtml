@@ -1,0 +1,62 @@
+﻿@using ShoppingCart.Web.Utility
+@{
+    var status = Context.Request.Query["status"];
+    var approved = ""; var ReadyForPickup = ""; var Cancelled = ""; var All = "";
+    
+    switch(status)
+    {
+        case StaticData.Status_Approved:
+            approved = "active text-white bg-secondary";
+            break;
+        case StaticData.Status_ReadyForPickup:
+            ReadyForPickup = "active text-white bg-secondary";
+            break;
+        case StaticData.Status_Cancelled:
+            Cancelled = "active text-white bg-secondary";
+            break;
+        default:
+            All = "active text-white bg-secondary";
+            break;
+    }
+}
+<div class="card shadow order-0 mt-4">
+    <div class="card-header bg-secondary bg-gradient m-0 py-3">
+        <div class="row">
+            <h1>Order List</h1>
+        </div>
+        <ul class="list-group list-group-horizontal-sm pt-2">
+            <a style="text-decoration:none" asp-controller="Order" asp-action="Index" asp-route-status="@StaticData.Status_Approved">
+            <li class="list-group-item @approved">@StaticData.Status_Approved</li>
+            </a>
+            <a style="text-decoration:none" asp-controller="Order" asp-action="Index" asp-route-status="@StaticData.Status_ReadyForPickup">
+            <li class="list-group-item @ReadyForPickup">@StaticData.Status_ReadyForPickup</li>
+            </a>
+            </a>
+            <a style="text-decoration:none" asp-controller="Order" asp-action="Index" asp-route-status="@StaticData.Status_Cancelled">
+            <li class="list-group-item @Cancelled">@StaticData.Status_Cancelled</li>
+            </a>
+            <a style="text-decoration:none" asp-controller="Order" asp-action="Index" asp-route-status="@StaticData.Status_All">
+            <li class="list-group-item @All">@StaticData.Status_All</li>
+            </a>
+        </ul>
+    </div>
+    <div class="card-body p-4">
+        <table id="tblData" class="table table-bordered table-striped pt-3" style="width:100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Email</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/order.js"></script>
+}

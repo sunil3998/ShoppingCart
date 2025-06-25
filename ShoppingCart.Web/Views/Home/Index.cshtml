@@ -1,0 +1,31 @@
+﻿@model IEnumerable<ShoppingCart.Web.Models.ProductsDto>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="card">
+    <div class="card-header">
+        Product List
+    </div>
+    <div class="card-body">
+        <div class="row">
+            @foreach (var products in Model)
+            {
+                <div class="card" style="width: 18rem;">
+                    <img src="@products.ImageUrl" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">@products.CategoryName</h5>
+                        <p class="card-text">@String.Format("{0:c}",@products.Price)</p>
+                        <p class="card-text">@products.Description</p>
+                    </div>
+                    <div class="card-body">
+
+                        <a asp-action="Details" asp-route-id="@products.Id" class="btn btn-outline-primary"><i class="bi "></i>Details</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
