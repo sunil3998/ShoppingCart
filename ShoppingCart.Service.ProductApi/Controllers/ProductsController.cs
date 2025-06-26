@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using ShoppingCart.Service.ProductApi.Data;
 using ShoppingCart.Service.ProductApi.Models;
 using ShoppingCart.Service.ProductApi.Models.Dto;
+using System.Globalization;
 
 namespace ShoppingCart.Service.ProductApi.Controllers
 {
@@ -59,11 +60,29 @@ namespace ShoppingCart.Service.ProductApi.Controllers
         [HttpPost]
         [Route("Create")]
         [Authorize(Roles = "ADMIN")]
-        public ResponseDto Post([FromBody] ProductsDto productsDto)
+        public ResponseDto Post(ProductsDto productsDto)
         {
             try
             {
                 ProductModel product = _mapper.Map<ProductModel>(productsDto);
+                if (productsDto.Image != null)
+                {
+                    string extention = Path.GetExtension(productsDto.Image.FileName) == "" ? ".jpg" : Path.GetExtension(productsDto.Image.FileName);
+                    string fileName = product.Id.ToString() + extention;
+                    string filePath = @"wwwroot\ProductImages\" + fileName;
+                    var filePathDirectory = Path.Combine(Directory.GetCurrentDirectory(), filePath);
+                    using (var fileStream = new FileStream(filePathDirectory, FileMode.Create))
+                    {
+                        productsDto.Image.CopyTo(fileStream);
+                    }
+                    var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}{HttpContext.Request.PathBase.Value}";
+                    product.ImageLocalPath = filePath;
+                    product.ImageUrl = baseUrl + "/ProductImages/" + fileName;
+                }
+                else
+                {
+                    product.ImageUrl = "";
+                }
                 _context.Products.Add(product);
                 _context.SaveChanges();
                 _response.Result = _mapper.Map<ProductsDto>(product);
@@ -80,11 +99,39 @@ namespace ShoppingCart.Service.ProductApi.Controllers
         [HttpPut]
         [Route("Update")]
         [Authorize(Roles = "ADMIN")]
-        public ResponseDto Put([FromBody] ProductsDto productsDto)
+        public ResponseDto Put(ProductsDto productsDto)
         {
             try
             {
                 ProductModel product = _mapper.Map<ProductModel>(productsDto);
+                if (productsDto.Image != null)
+                {
+                    if(!string.IsNullOrEmpty(product.ImageLocalPath))
+                    {
+                        var oldFilePathDirectory=Path.Combine(Directory.GetCurrentDirectory(), product.ImageLocalPath);
+                        FileInfo fileInfo = new FileInfo(oldFilePathDirectory);
+                        if(fileInfo.Exists)
+                        {
+                            fileInfo.Delete();
+                        }
+                    }
+
+                    string extention = Path.GetExtension(productsDto.Image.FileName) == "" ? ".jpg" : Path.GetExtension(productsDto.Image.FileName);
+                    string fileName = product.Id.ToString() + extention;
+                    string filePath = @"wwwroot\ProductImages\" + fileName;
+                    var filePathDirectory = Path.Combine(Directory.GetCurrentDirectory(), filePath);
+                    using (var fileStream = new FileStream(filePathDirectory, FileMode.Create))
+                    {
+                        productsDto.Image.CopyTo(fileStream);
+                    }
+                    var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}{HttpContext.Request.PathBase.Value}";
+                    product.ImageLocalPath = filePath;
+                    product.ImageUrl = baseUrl + "/ProductImages/" + fileName;
+                }
+                else
+                {
+                    product.ImageUrl = "";
+                }
                 _context.Products.Update(product);
                 _context.SaveChanges();
                 _response.Result = _mapper.Map<ProductsDto>(product);
@@ -106,6 +153,15 @@ namespace ShoppingCart.Service.ProductApi.Controllers
             try
             {
                 var product = _context.Products.First(x => x.Id == id);
+                if (!string.IsNullOrEmpty(product.ImageLocalPath))
+                {
+                    var oldFilePathDirectory = Path.Combine(Directory.GetCurrentDirectory(), product.ImageLocalPath);
+                    FileInfo fileInfo = new FileInfo(oldFilePathDirectory);
+                    if (fileInfo.Exists)
+                    {
+                        fileInfo.Delete();
+                    }
+                }
                 _context.Products.Remove(product);
                 _context.SaveChanges();
                 _response.Result = _mapper.Map<ProductsDto>(product);

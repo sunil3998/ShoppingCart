@@ -17,7 +17,8 @@ namespace ShoppingCart.Web.Service
             {
                 ApiType = StaticData.ApiType.POST,
                 Data = productDto,
-                Url = StaticData.ProductApiBase + "/api/Products/Create"
+                Url = StaticData.ProductApiBase + "/api/Products/Create",
+                ContentType=StaticData.ContentType.MultipartFormData
             }, withBearer: true);
         }
 
@@ -54,7 +55,8 @@ namespace ShoppingCart.Web.Service
             {
                 ApiType = StaticData.ApiType.PUT,
                 Data = productDto,
-                Url = StaticData.ProductApiBase + "/api/Products"
+                Url = StaticData.ProductApiBase + "/api/Products",
+                ContentType = StaticData.ContentType.MultipartFormData
             }, withBearer: true);
         }
     }

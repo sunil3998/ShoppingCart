@@ -14,7 +14,7 @@
         /// <summary>
         /// this const variable use for user role assign
         /// </summary>
-        public const string RoleAdmin="ADMIN";
+        public const string RoleAdmin = "ADMIN";
         public const string RoleCustomer = "CUSTOMER";
         public const string TokenCookie = "JWTToken";
 
@@ -45,6 +45,12 @@
             POST,
             PUT,
             DELETE
+        }
+
+        public enum ContentType
+        {
+            Json,
+            MultipartFormData,
         }
     }
 }

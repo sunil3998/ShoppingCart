@@ -17,7 +17,7 @@
         <br />
         <div class="row">
             <div class="col-md-8">
-                <form asp-action="Create" method="post">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="form-group">
                         <label asp-for="Name" class="control-label"></label>
@@ -41,8 +41,9 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="ImageUrl" class="control-label"></label>
-                        <input asp-for="ImageUrl" class="form-control" />
-                        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                        <input asp-for="Image" class="form-control" />
+                        <input asp-for="ImageUrl" hidden class="form-control" />
+                        <span asp-validation-for="Image" class="text-danger"></span>
                     </div>
                     <div class="form-group form-check">
                         <label class="form-check-label">

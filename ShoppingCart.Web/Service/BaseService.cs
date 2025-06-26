@@ -25,24 +25,57 @@ namespace ShoppingCart.Web.Service
             {
                 HttpClient httpClient = _httpClientFactory.CreateClient("ShoppingCartApi");
                 HttpRequestMessage httpRequestMessage = new();
-                httpRequestMessage.Headers.Add("Accept", "Application/json");
 
+                if(requestDto.ContentType==ContentType.MultipartFormData)
+                {
+                    httpRequestMessage.Headers.Add("Accept", "*/*");
+                }
+                else
+                {
+                    httpRequestMessage.Headers.Add("Accept", "Application/json");
+                }
                 //token
-                if(withBearer)
+                if (withBearer)
                 {
                     var token = _tokenProviderService.GetToken();
                     if (!string.IsNullOrEmpty(token))
                     {
                         httpRequestMessage.Headers.Add("Authorization", $"Bearer {token}");
                     }
-    
+
                 }
                  
                 httpRequestMessage.RequestUri = new Uri(requestDto.Url);
-                if (requestDto.Data != null)
+
+                if (requestDto.ContentType == ContentType.MultipartFormData)
                 {
-                    httpRequestMessage.Content = new StringContent(JsonConvert.SerializeObject(requestDto.Data), Encoding.UTF8, "application/json");
+                    var content = new MultipartFormDataContent();
+                    foreach (var prop in requestDto.Data.GetType().GetProperties())
+                    {
+                        var val = prop.GetValue(requestDto.Data);
+                        if (val is FormFile)
+                        {
+                            var file = (FormFile)val;
+                            if (file != null)
+                            {
+                                content.Add(new StreamContent(file.OpenReadStream()), prop.Name, file.Name);
+                            }
+                        }
+                        else
+                        {
+                            content.Add(new StringContent(val == null ? "" : val.ToString()), prop.Name);
+                        }
+                        httpRequestMessage.Content = content;
+                    }
                 }
+                else
+                {
+                    if (requestDto.Data != null)
+                    {
+                        httpRequestMessage.Content = new StringContent(JsonConvert.SerializeObject(requestDto.Data), Encoding.UTF8, "application/json");
+                    }
+                }
+
                 HttpResponseMessage? httpResponseMessage = null;
 
                 switch (requestDto.ApiType)
