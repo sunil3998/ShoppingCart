@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ShoppingCart.Web.Utility;
+using System.ComponentModel.DataAnnotations;
 
 namespace ShoppingCart.Web.Models
 {
@@ -10,6 +11,8 @@ namespace ShoppingCart.Web.Models
         public string Description { get; set; }
         public string CategoryName { get; set; }
         public string? ImageUrl { get; set; }
+        [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png" })]
+        [MaxFileSize(1)]
         public IFormFile? Image { get; set; }
         public string? ImageLocalPath { get; set; }
         public bool IsActive { get; set; }

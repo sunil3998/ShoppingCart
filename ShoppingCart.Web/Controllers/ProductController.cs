@@ -37,16 +37,19 @@ namespace ShoppingCart.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(ProductsDto productsDto)
         {
-           // productsDto.CouponPicture = new byte[0];
-            ResponseDto? responseDto = await _productService.CreateProductAsync(productsDto);
-            if (responseDto != null && responseDto.IsSuccess)
+            if (ModelState.IsValid)
             {
-                TempData["success"] = responseDto?.Message;
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                TempData["error"] = responseDto.Message;
+                // productsDto.CouponPicture = new byte[0];
+                ResponseDto? responseDto = await _productService.CreateProductAsync(productsDto);
+                if (responseDto != null && responseDto.IsSuccess)
+                {
+                    TempData["success"] = responseDto?.Message;
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    TempData["error"] = responseDto.Message;
+                }
             }
             return View(productsDto);
         }
@@ -78,23 +81,25 @@ namespace ShoppingCart.Web.Controllers
             {
                 TempData["error"] = responseDto.Message;
             }
-            objProductsDto.ImageUrl = "";
             return View(objProductsDto);
         }
 
         [HttpPost]
         public async Task<IActionResult> Edit(ProductsDto productsDto)
         {
-           // productsDto.CouponPicture = new byte[0];
-            ResponseDto? responseDto = await _productService.UpdatedProductAsync(productsDto);
-            if (responseDto != null && responseDto.IsSuccess)
+            if (ModelState.IsValid)
             {
-                TempData["success"] = responseDto.Message;
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                TempData["error"] = responseDto.Message;
+                // productsDto.CouponPicture = new byte[0];
+                ResponseDto? responseDto = await _productService.UpdatedProductAsync(productsDto);
+                if (responseDto != null && responseDto.IsSuccess)
+                {
+                    TempData["success"] = responseDto.Message;
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    TempData["error"] = responseDto.Message;
+                }
             }
             return View(productsDto);
         }
