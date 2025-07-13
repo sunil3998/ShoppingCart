@@ -22,7 +22,7 @@ namespace ShoppingCart.Web.Service
             {
                 ApiType = StaticData.ApiType.POST,
                 Data = cartDto,
-                Url = StaticData.OrdersApiBase + "/api/order/CreateOrder"
+                Url = StaticData.OrdersApiBase + "/api/OrderApi/CreateOrders"
             }, withBearer: true);
         }
 

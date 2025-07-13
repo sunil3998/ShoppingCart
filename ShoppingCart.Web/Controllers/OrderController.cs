@@ -32,7 +32,7 @@ namespace ShoppingCart.Web.Controllers
             ResponseDto response = _orderService.GetAllOrder(userId).GetAwaiter().GetResult();
             if (response != null && response.IsSuccess)
             {
-                list = JsonConvert.DeserializeObject<List<OrderHeaderDto>>(Convert.ToString(response.Result));
+               list = JsonConvert.DeserializeObject<List<OrderHeaderDto>>(Convert.ToString(response.Result));
                switch(status)
                 {
                     case StaticData.Status_Approved:
